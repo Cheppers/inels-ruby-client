@@ -16,17 +16,14 @@ end
 room_names = JSON.parse(File.read('roomnames.json'))
 
 
-room_name = ARGV[0]
-temperature = Integer(ARGV[1])
-
-def schedule id, temp
+def schedule id
 %Q<{
 "id": "#{id}",
 "hysteresis": 0.1,
 "label": "#{id}",
 "modes": {
 "1": {
-"min": #{temp},
+"min": 24,
 "max": 35
 },
 "2": {
@@ -89,17 +86,24 @@ def schedule id, temp
 }>
 end
 
+i = 10;
 IPS.each do |ip|
   @ip = ip
   rooms = api_get('rooms')
   rooms.each do |id, value|
     room = api_get("rooms/#{id}")
-    if room_names[room['room info']['label']] == room_name
-      room['devices'].keys.each do |id|
-        device = api_get("devices/#{id}")
-        if device['device info']['product type'] == 'HeatCoolArea'
-          api_post('temperature/schedules', schedule(device['schedule'], temperature))
-        end
+    room['devices'].keys.each do |id|
+      device = api_get("devices/#{id}")
+      if device['device info']['product type'] == 'HeatCoolArea'
+        api_post('temperature/schedules', schedule("226#{i}"))
+        device['schedule'] = "226#{i}"
+        device.delete('actions info')
+        device.delete('primary actions')
+        device.delete('secondary actions')
+        device.delete('settings')
+        device.delete('cooling devices')
+        api_post("devices", device.to_json)
+        i+=1
       end
     end
   end
