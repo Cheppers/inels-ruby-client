@@ -1,0 +1,67 @@
+{
+    "id": "<%= schedule_id %>",
+    "hysteresis": 0.1,
+    "label": "<%= schedule_id %>",
+    "modes": {
+        "1": {
+            "min": <%= temperature %>,
+            "max": 35
+        },
+        "2": {
+            "min": 20,
+            "max": 35
+        },
+        "3": {
+            "min": 20,
+            "max": 35
+        },
+        "4": {
+            "min": 28,
+            "max": 35
+        }
+    },
+    "schedule": {
+        "monday": [
+            {
+                "duration": 1440,
+                "mode": 1
+            }
+        ],
+        "tuesday": [
+            {
+                "duration": 1440,
+                "mode": 1
+            }
+        ],
+        "wednesday": [
+            {
+                "duration": 1440,
+                "mode": 1
+            }
+        ],
+        "thursday": [
+            {
+                "duration": 1440,
+                "mode": 1
+            }
+        ],
+        "friday": [
+            {
+                "duration": 1440,
+                "mode": 1
+            }
+        ],
+        "saturday": [
+            {
+                "duration": 1440,
+                "mode": 1
+            }
+        ],
+        "sunday": [
+            {
+                "duration": 1440,
+                "mode": 1
+            }
+        ]
+    }
+}
