@@ -16,7 +16,7 @@ schedule = ERB.new(File.read('lib/templates/schedule.erb'))
 IPS.each do |ip|
   client = Client.new(ip)
   rooms = client.api_get('rooms')
-  rooms.each do |id, value|
+  rooms.keys.each do |id|
     room = client.api_get("rooms/#{id}")
     if room_names[room['room info']['label']] == room_name
       room['devices'].keys.each do |id|
