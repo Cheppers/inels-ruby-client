@@ -23,7 +23,7 @@ IPS.each do |ip|
         device = client.api_get("devices/#{id}")
         if device['device info']['product type'] == 'HeatCoolArea'
           schedule_id = device['schedule']
-          client.api_post('temperature/schedules', schedule.result())
+          client.api_post('temperature/schedules', schedule.result(binding))
         end
       end
     end
