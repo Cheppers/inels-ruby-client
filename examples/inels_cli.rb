@@ -2,9 +2,9 @@
 
 require 'thor'
 require 'yaml'
-require_relative 'lib/controller'
+require_relative '../lib/controller'
 
-CONFIG = YAML.load(File.read('config.yml'))
+CONFIG = YAML.load(File.read(File.join(File.dirname(__FILE__), 'config.yml')))
 
 class InelsCLI < Thor
   desc 'set-temperature', 'Sets room temperature'

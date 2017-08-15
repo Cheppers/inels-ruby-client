@@ -5,7 +5,7 @@ module Inels
   class Controller
     def initialize ips
       @multi_client = MultiClient.new(ips)
-      @schedule = ERB.new(File.read('lib/templates/schedule.erb'))
+      @schedule = ERB.new(File.read(File.join(File.dirname(__FILE__), 'templates/schedule.erb')))
     end
 
     attr_reader :multi_client
