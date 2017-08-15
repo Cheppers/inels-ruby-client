@@ -11,20 +11,20 @@ class InelsCLI < Thor
 
   desc 'set-temperature', 'Sets room temperature'
   def set_temperature room_name, temperature
-    Controller.new(IPS).set_temperature(ROOM_NAMES.key(room_name), Integer(temperature))
+    Inels::Controller.new(IPS).set_temperature(ROOM_NAMES.key(room_name), Integer(temperature))
   end
 
   desc 'get-temperature', 'Gets room temperature'
   def get_temperature room_name
-    Controller.new(IPS).get_states(ROOM_NAMES.key(room_name)).each do |state|
-      puts "#{state['temperature']}[#{state['requested temperature']}]"
+    Inels::Controller.new(IPS).get_states(ROOM_NAMES.key(room_name)).each do |hcl_id, state|
+      puts "#{hcl_id}: #{state['temperature']}[#{state['requested temperature']}]"
     end
   end
 
   desc 'get-all-temperature', 'Gets all room temperature'
   def get_all_temperature
-    Controller.new(IPS).get_all_states.each do |id, states|
-      puts "#{ROOM_NAMES[id]}: #{states.map{|state|"#{state['temperature']}[#{state['requested temperature']}]"}.join(', ')}"
+    Inels::Controller.new(IPS).get_all_states.each do |id, states|
+      puts "#{ROOM_NAMES[id]}: #{states.values.map{|state|"#{state['temperature']}[#{state['requested temperature']}]"}.join(', ')}"
     end
   end
 end
