@@ -2,7 +2,7 @@ require 'rest-client'
 require 'json'
 
 class Client
-  def initialize(ip)
+  def initialize ip
     @ip = ip
   end
 

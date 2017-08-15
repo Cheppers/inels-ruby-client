@@ -1,7 +1,7 @@
 require_relative 'client'
 
 class MultiClient
-  def initialize(ips)
+  def initialize ips
     @clients = ips.map{ |ip| Client.new(ip)}
   end
 
