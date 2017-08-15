@@ -11,14 +11,20 @@ multi_client.clients.each do |client|
   rooms = client.api_get('rooms')
   rooms.keys.each do |id| 
     room = client.api_get("rooms/#{id}")
-    temperature = room['devices'].keys.select do |id|
-      device = client.api_get("devices/#{id}")
+
+    devices = room['devices'].keys.map do |device_id|
+      client.api_get("devices/#{device_id}")
+    end
+
+    heat_cool_areas = devices.select do |device|
       device['device info']['product type'] == 'HeatCoolArea'
-    end.map do |id|
-      device_status = client.api_get("devices/#{id}/state")
-      "#{device_status['temperature']}[#{device_status['requested temperature']}]"
-    end.compact
-  
-    puts"#{room_names[id]}: #{temperature.join(', ')}"
+    end
+
+    states = heat_cool_areas.map do |hca|
+      client.api_get("devices/#{hca['id']}/state")
+    end
+
+    puts"#{room_names[id]}: #{states.map{|state|"#{state['temperature']}[#{state['requested temperature']}]"}.join(', ')}"
   end
+
 end

@@ -15,10 +15,18 @@ schedule = ERB.new(File.read('lib/templates/schedule.erb'))
 client = multi_client.client_for_id('rooms', room_id)
 
 room = client.api_get("rooms/#{room_id}")
-room['devices'].keys.each do |device_id|
-  device = client.api_get("devices/#{device_id}")
-  if device['device info']['product type'] == 'HeatCoolArea'
-    schedule_id = device['schedule']
-    client.api_post('temperature/schedules', schedule.result(binding))
-  end
+
+devices = room['devices'].keys.map do |device_id|
+  client.api_get("devices/#{device_id}")
 end
+
+heat_cool_areas = devices.select do |device|
+  device['device info']['product type'] == 'HeatCoolArea'
+end
+
+heat_cool_areas.each do |hca| 
+  schedule_id = hca['schedule']
+  client.api_post('temperature/schedules', schedule.result(binding))
+end
+
+
