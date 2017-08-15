@@ -1,13 +1,13 @@
 require 'rest-client'
 require 'json'
-require_relative 'lib/client'
+require_relative 'lib/multi_client'
 
 IPS=['192.168.1.30', '192.168.1.31', '192.168.1.32']
+multi_client = MultiClient.new(IPS)
 
 room_names = JSON.parse(File.read('roomnames.json'))
 
-IPS.each do |ip|
-  client = Client.new(ip)
+multi_client.clients.each do |client|
   rooms = client.api_get('rooms')
   rooms.keys.each do |id| 
     room = client.api_get("rooms/#{id}")
@@ -19,6 +19,6 @@ IPS.each do |ip|
       "#{device_status['temperature']}[#{device_status['requested temperature']}]"
     end.compact
   
-    puts"#{room_names[room['room info']['label']]}: #{temperature.join(', ')}"
+    puts"#{room_names[id]}: #{temperature.join(', ')}"
   end
 end
