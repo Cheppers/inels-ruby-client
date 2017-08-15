@@ -1,0 +1,25 @@
+---
+ips:
+  - '192.168.1.30'
+  - '192.168.1.31'
+  - '192.168.1.32'
+room names:
+  '14827': Drupal
+  '25569': New Community
+  '29106': Boulevard
+  '30329': Operations
+  '31776': 'Meeting Room #1'
+  '32137': Parks and recreation
+  '33704': Titan
+  '33970': 'Meeting Room #2'
+  '35248': Boss Office
+  '36378': Chewee
+  '37839': The BIG Room
+  '42025': Old Community
+  '43384': Shower
+  '46144': Kucko
+  '46247': English Room
+  '47821': Kitchen
+  '49693': Dining Room
+  '51320': Smoking Area
+  '54913': Aquarium
