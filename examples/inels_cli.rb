@@ -2,7 +2,7 @@
 
 require 'thor'
 require 'yaml'
-require_relative '../lib/controller'
+require_relative '../lib/inels'
 
 CONFIG = YAML.load(File.read(File.join(File.dirname(__FILE__), 'config.yml')))
 
