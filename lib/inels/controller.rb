@@ -37,6 +37,20 @@ module Inels
       end.flatten(1).to_h
     end
 
+    def get_info room_id, client = nil
+      client ||= multi_client.client_for_id('rooms', room_id)
+      client.api_get("rooms/#{room_id}")
+    end
+
+    def get_all_info
+      room_states = multi_client.clients.map do |client|
+        rooms = client.api_get('rooms')
+        rooms.keys.map do |room_id| 
+          get_info(room_id, client)
+        end
+      end.flatten(1)
+    end
+
     def get_heat_cool_areas room_id, client = nil
       client ||= multi_client.client_for_id('rooms', room_id)
 
