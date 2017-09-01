@@ -9,14 +9,12 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Zsolt Prontvai']
   spec.email         = ['prozsolt@gmail.com']
 
-  spec.summary       = %q{library}
-  spec.description   = %q{This tool pulls information from github and jira to make release notes.}
+  spec.summary       = %q{Inels client library}
+  spec.description   = %q{Client library for the Inels eLAN-RF-003 home automation system}
   spec.homepage      = "https://github.com/ProZsolt"
 
   spec.files = Dir["lib/**/*"]
 
-  spec.bindir        = "exe"
-  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency 'rest-client'
