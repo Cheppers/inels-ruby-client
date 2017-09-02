@@ -20,6 +20,14 @@ module Inels
       end
     end
 
+    def set_power room_id, power, client = nil
+      client ||= multi_client.client_for_id('rooms', room_id)
+      
+      get_heat_cool_areas(room_id, client).each do |hca| 
+        client.api_put("devices/#{hca['id']}", {power: power}.to_json)
+      end
+    end
+
     def get_states room_id, client = nil
       client ||= multi_client.client_for_id('rooms', room_id)
 

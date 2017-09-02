@@ -21,5 +21,11 @@ module Inels
       response = RestClient.delete "http://#{@ip}/api/#{path}"
       response.body
     end
+
+    def api_put path, payload
+      response = RestClient.put "http://#{@ip}/api/#{path}", payload, {content_type: :json, accept: :json}
+      response.body
+    end
+
   end
 end
