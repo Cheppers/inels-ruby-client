@@ -1,7 +1,6 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'inels'
 
 Gem::Specification.new do |spec|
   spec.name          = 'inels'
@@ -11,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Inels client library}
   spec.description   = %q{Client library for the Inels eLAN-RF-003 home automation system}
-  spec.homepage      = "https://github.com/ProZsolt"
+  spec.homepage      = "https://github.com/ProZsolt/inels"
 
   spec.files = Dir["lib/**/*"]
 
