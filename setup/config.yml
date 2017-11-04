@@ -1,0 +1,41 @@
+---
+clients:
+- ip: 192.168.1.30
+  boiler:
+    address: DEADBE
+  rooms:
+  - name: Titan
+    heating areas:
+    - valves:
+      - address: DEADBE
+      - address: 2B3456
+      - address: ABCDEF
+      thermometer: 
+        address: BCDEFG
+  - name: Kitchen
+    heating areas:
+    - valves:
+      - address: ABCDEF
+      - address: BCDEFG
+      thermometer: 
+        address: BCDEFG
+- ip: 192.168.1.31
+  boiler:
+    address: DEADBE
+  rooms:
+  - name: Boss Office
+    heating areas:
+    - valves:
+      - address: DEADBE
+      - address: 2B3456
+      - address: ABCDEF
+      thermometer: 
+        address: BCDEFG
+  - name: Drupal
+    heating areas:
+    - valves:
+      - address: ABCDEF
+      - address: BCDEFG
+      thermometer: 
+        address: BCDEFG
+
