@@ -25,24 +25,29 @@ def create_thermometer endpoint, address
 
 end
 
-def create_schedule endpoint, address
-  
+def create_schedule endpoint
+  post_template endpoint, 'temperature/schedules', 'schedule.erb'
 end
 
-def create_heating_area endpoint, address
-  
+def create_heating_area endpoint, schedule, temperature_sensor, heating_devices
+  @schedule = schedule
+  @temperature_sensor = temperature_sensor
+  @heating_devices = heating_devices
+  post_template endpoint, 'devices', 'heat_cool_area.erb'  
 end
 
 def create_boiler endpoint, address
-  
+  @address = address.hex
+  @type = 'heating'
+  @product_type = 'RFSA-61B'
+  post_template endpoint, 'devices', 'device.erb' 
 end
 
-def create_source endpoint, address
-  
+def create_source endpoint, boiler, areas
+  @boiler = boiler
+  @areas = areas
+  post_template endpoint, 'temperature/sources'
 end
-
-
-p create_valve Inels::Client.new('192.168.1.31'), 110616
 
 # output = YAML.load(File.read(File.join(File.dirname(__FILE__), 'config.yml')))
 # id = 0

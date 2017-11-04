@@ -20,6 +20,15 @@ module Inels
       end
     end
 
+    def set_all_temperature temperature
+      room_states = multi_client.clients.map do |client|
+        rooms = client.api_get('rooms')
+        rooms.keys.each do |room_id| 
+          set_temperature room_id, temperature, client
+        end
+      end
+    end
+
     def set_power room_id, power, client = nil
       client ||= multi_client.client_for_id('rooms', room_id)
       

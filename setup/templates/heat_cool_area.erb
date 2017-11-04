@@ -1,18 +1,18 @@
 {
-    device info: {
-        label: "i1k1h",
-        product type: "HeatCoolArea",
-        type: "temperature regulation area"
+    "device info": {
+        "product type": "HeatCoolArea",
+        "type": "temperature regulation area"
     },
-    schedule: "35412",
-    schedule2: "35493",
-    temperature sensor: {
-        27952: "temperature"
+    "schedule": "<%= @schedule %>",
+    "temperature sensor": {
+        "<%= @temperature_sensor %>": "temperature"
     },
-    heating devices: [
-        {
-            id: "27952",
-            central source: false
-        }
+    "heating devices": [
+        <% @heating_devices.each do |heating_device| %>
+            {
+                "id": "<%= heating_device %>",
+                "central source": true
+            },
+        <% end %>
     ]
 }
