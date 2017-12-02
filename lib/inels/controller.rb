@@ -11,75 +11,54 @@ module Inels
     attr_reader :multi_client
     attr_reader :schedule
 
-    def set_temperature room_id, temperature, client = nil
-      client ||= multi_client.client_for_id('rooms', room_id)
-
-      get_heat_cool_areas(room_id, client).each do |hca| 
-        schedule_id = hca['schedule']
-        client.api_post('temperature/schedules', schedule.result(binding))
-      end
-    end
-
-    def set_all_temperature temperature
-      room_states = multi_client.clients.map do |client|
-        rooms = client.api_get('rooms')
-        rooms.keys.each do |room_id| 
-          set_temperature room_id, temperature, client
-        end
-      end
-    end
-
-    def set_power room_id, power, client = nil
-      client ||= multi_client.client_for_id('rooms', room_id)
-      
-      get_heat_cool_areas(room_id, client).each do |hca| 
-        client.api_put("devices/#{hca['id']}", {power: power}.to_json)
-      end
-    end
-
-    def get_states room_id, client = nil
-      client ||= multi_client.client_for_id('rooms', room_id)
-
-      get_heat_cool_areas(room_id, client).map do |hca|
-        [hca['id'], client.api_get("devices/#{hca['id']}/state")]
-      end.to_h
-    end
-
-    def get_all_states
+    def list_devices
       room_states = multi_client.clients.map do |client|
         rooms = client.api_get('rooms')
         rooms.keys.map do |room_id| 
-          [room_id, get_states(room_id, client)]
+          room = client.api_get("rooms/#{room_id}")
+          devices = room['devices'].keys.map do |device_id|
+            device = client.api_get("devices/#{device_id}")
+            case device['device info']['product type']
+            when 'HeatCoolArea'
+              device['room_name'] = room['room info']['label']
+              device['ip'] = client.ip
+              {
+                id: device['id'],
+                name: device['device info']['label'],
+                product_type: device['device info']['product type'],
+                room_name: room['room info']['label'],
+                ip: client.ip
+              }
+            else
+              nil
+            end
+          end.compact
         end
-      end.flatten(1).to_h
+      end.flatten
     end
 
-    def get_info room_id, client = nil
-      client ||= multi_client.client_for_id('rooms', room_id)
-      client.api_get("rooms/#{room_id}")
-    end
+    def get_device id, client: nil, verbose: false
+      client ||= multi_client.client_for_id('devices', id)
+      device_state = client.api_get("devices/#{id}/state")
+      if verbose
+        device = client.api_get("devices/#{id}")
 
-    def get_all_info
-      room_states = multi_client.clients.map do |client|
-        rooms = client.api_get('rooms')
-        rooms.keys.map do |room_id| 
-          get_info(room_id, client)
+        device_state['valves'] = device['heating devices'].map do |valve|
+          client.api_get("devices/#{valve['id']}/state")
         end
-      end.flatten(1)
+      end
+      device_state
     end
 
-    def get_heat_cool_areas room_id, client = nil
-      client ||= multi_client.client_for_id('rooms', room_id)
+    def set_temperature id, temperature, client: nil
+      client ||= multi_client.client_for_id('devices', id)
+      schedule_id = client.api_get("devices/#{id}")['schedule']
+      client.api_post('temperature/schedules', schedule.result(binding))
+    end
 
-      room = client.api_get("rooms/#{room_id}")
-
-      devices = room['devices'].keys.map do |device_id|
-        client.api_get("devices/#{device_id}")
-      end
-
-      devices.select do |device|
-        device['device info']['product type'] == 'HeatCoolArea'
-      end
+    def set_power id, power, client: nil
+      client ||= multi_client.client_for_id('devices', id)
+      client.api_put("devices/#{id}", {power: power}.to_json)
     end
   end
 end

@@ -13,7 +13,7 @@ module Inels
         hash = client.api_get(path)
         return client if hash.keys.include?(id)
       end
-      nil
+      raise RestClient::NotFound
     end
   end
 end

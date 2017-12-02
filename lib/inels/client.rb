@@ -7,6 +7,8 @@ module Inels
       @ip = ip
     end
 
+    attr_reader :ip
+
     def api_get path
       response = RestClient.get "http://#{@ip}/api/#{path}"
       JSON.parse(response.body)
