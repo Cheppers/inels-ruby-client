@@ -22,7 +22,10 @@ def create_valve endpoint, address
 end
 
 def create_thermometer endpoint, address
-
+  @address = address.hex
+  @type = 'thermometer'
+  @product_type = 'RFTI-10B'
+  post_template endpoint, 'devices', 'device.erb'
 end
 
 def create_schedule endpoint
@@ -49,6 +52,8 @@ def create_source endpoint, boiler, areas
   post_template endpoint, 'temperature/sources'
 end
 
+endpoint = Inels::Client.new('192.168.1.32')
+p create_thermometer(endpoint, '001A53')
 # output = YAML.load(File.read(File.join(File.dirname(__FILE__), 'config.yml')))
 # id = 0
 # output['clients'].each do |client|

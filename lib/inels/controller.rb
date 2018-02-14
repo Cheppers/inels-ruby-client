@@ -56,6 +56,11 @@ module Inels
       client.api_post('temperature/schedules', schedule.result(binding))
     end
 
+    def set_correction id, correction, client: nil
+      client ||= multi_client.client_for_id('devices', id)
+      client.api_put("devices/#{id}", {correction: correction}.to_json)
+    end
+
     def set_power id, power, client: nil
       client ||= multi_client.client_for_id('devices', id)
       client.api_put("devices/#{id}", {power: power}.to_json)
