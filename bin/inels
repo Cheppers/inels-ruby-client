@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+
+require 'thor'
+require_relative '../lib/inels'
+
+IPS = %w(192.168.1.30 192.168.1.31 192.168.1.32)
+
+class InelsCLI < Thor
+
+  desc 'list', 'List all devices'
+  def list 
+    devices = Inels::Controller.new(IPS).list_devices
+    head = [
+      { name: 'ID',         id: :id           },
+      { name: 'Name',       id: :name         },
+      { name: 'Type',       id: :product_type },
+      { name: 'Room name',  id: :room_name    },
+      { name: 'IP address', id: :ip           },
+    ]
+    print_table(devices, head)
+  end
+
+  desc 'get-device', 'Gets device\'s information'
+  def get_device id
+    device = Inels::Controller.new(IPS).get_device(id)
+    device.each do |k,v|
+      puts k + ': ' + v.to_s
+    end
+  end
+
+  desc 'set-temperature', 'Sets device\'s correction'
+  def set_correction id, correction
+    Inels::Controller.new(IPS).set_correction(id, Integer(correction))
+  end
+
+  desc 'set-power', 'Sets device\'s power'
+  def set_power id, power
+    Inels::Controller.new(IPS).set_power(id, Integer(power))
+  end
+
+  no_commands do
+    def print_table(values, head)
+      head.each do |title|
+        title[:lenght] = (values.map{|value| value[title[:id]].to_s.length} + [title[:name].length]).max
+      end
+      print_line(head)
+      print_head(head)
+      print_line(head)
+      values.each{|row| print_row(head, row)}
+      print_line(head)
+      
+    end
+
+    def print_line(head)
+      puts '-' * (head.map{|e| e[:lenght] + 3}.reduce(&:+) + 1)
+    end
+
+    def print_head(head)
+      columns = head.map{|e| e[:name].ljust(e[:lenght], ' ')}
+      puts '| ' + columns.join(' | ') + ' |'
+    end
+
+    def print_row(head, row)
+      columns = head.map{|e| row[e[:id]].to_s.ljust(e[:lenght], ' ')}
+      puts '| ' + columns.join(' | ') + ' |'
+    end
+  end
+end
+
+InelsCLI.start
