@@ -7,7 +7,7 @@ IPS = %w(192.168.1.30 192.168.1.31 192.168.1.32)
 
 class InelsCLI < Thor
 
-  desc 'list', 'List all devices'
+  desc 'list', 'List devices'
   def list 
     devices = Inels::Controller.new(IPS).list_devices
     head = [
@@ -20,7 +20,7 @@ class InelsCLI < Thor
     print_table(devices, head)
   end
 
-  desc 'get-device', 'Gets device\'s information'
+  desc 'get-device ID', 'Gets device\'s information'
   def get_device id
     device = Inels::Controller.new(IPS).get_device(id)
     device.each do |k,v|
@@ -28,12 +28,12 @@ class InelsCLI < Thor
     end
   end
 
-  desc 'set-temperature', 'Sets device\'s correction'
+  desc 'set-correction ID CORRECTION', 'Sets device\'s correction'
   def set_correction id, correction
     Inels::Controller.new(IPS).set_correction(id, Integer(correction))
   end
 
-  desc 'set-power', 'Sets device\'s power'
+  desc 'set-power ID POWER', 'Sets device\'s power'
   def set_power id, power
     Inels::Controller.new(IPS).set_power(id, Integer(power))
   end
