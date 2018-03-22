@@ -21,7 +21,7 @@ class InelsCLI < Thor
   end
 
   desc 'get-device ID', 'Gets device\'s information'
-  method_option :verbose, type: :boolean, default: false, desc: 'Show additional information related to the device'
+  method_option :verbose, type: :boolean, default: false, aliases: '-v', desc: 'Show additional information related to the device'
   def get_device id
     device = Inels::Controller.new(IPS).get_device(id, verbose: options[:verbose])
     device.each do |k,v|
