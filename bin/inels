@@ -25,9 +25,16 @@ class InelsCLI < Thor
   def get_device id
     device = Inels::Controller.new(IPS).get_device(id, verbose: options[:verbose])
     device.each do |k,v|
-      if v.is_a?(Hash)
-        v.each do |vk,vv|
-          puts "  #{vk}: #{vv}"
+      if v.is_a?(Array)
+        puts "#{k}: "
+        v.each do |ve|
+          ve.each_with_index do |(vk,vv),index|
+            if index == 0
+              puts "- #{vk}: #{vv}"
+            else
+              puts "  #{vk}: #{vv}"
+            end
+          end
         end
       else
         puts "#{k}: #{v}"
