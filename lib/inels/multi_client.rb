@@ -1,17 +1,20 @@
+require 'parallel'
 require_relative 'client'
 
 module Inels
   class MultiClient
-    def initialize ips
-      @clients = ips.map{ |ip| Client.new(ip)}
+    def initialize(clientdata = [])
+      @clients = []
+      Parallel.each(clientdata, in_threads: clientdata.count) do |client|
+        @clients << Client.new(client['ip'], client['username'], client['password'])
+      end
     end
 
     attr_reader :clients
 
-    def client_for_id path, id
+    def client_for_device(id)
       clients.each do |client|
-        hash = client.api_get(path)
-        return client if hash.keys.include?(id)
+        return client if client.has_device?(id)
       end
       raise RestClient::NotFound
     end

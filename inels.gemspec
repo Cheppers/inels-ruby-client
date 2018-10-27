@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = 'inels'
-  spec.version       = '0.1.3'
+  spec.version       = '0.2.0'
   spec.authors       = ['Zsolt Prontvai']
   spec.email         = ['prozsolt@gmail.com']
 
@@ -17,6 +17,8 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = ["lib"]
 
-  spec.add_dependency 'rest-client', '~> 2.0.2'
-  spec.add_dependency 'thor', '~> 0.20.0'
+  spec.add_dependency 'concurrent-ruby', '~> 1.0'
+  spec.add_dependency 'parallel', '~> 1.12'
+  spec.add_dependency 'rest-client', '~> 2.0'
+  spec.add_dependency 'thor', '~> 0.20'
 end
