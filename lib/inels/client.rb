@@ -75,11 +75,9 @@ module Inels
     end
 
     def login
-      puts "Logging in to #{@username}@#{@ip}..."
       payload = { name: @username, key: Digest::SHA1.hexdigest(@password) }
       response = RestClient.post "http://#{@ip}/login", payload
       @auth_token = response.cookies[AUTH_COOKIE]
-      puts "Successfully logged in to #{@ip}."
       refresh_devices
     end
 

@@ -5,6 +5,7 @@ PATH
       concurrent-ruby (~> 1.0)
       parallel (~> 1.12)
       rest-client (~> 2.0)
+      terminal-table (~> 1.8.0)
       thor (~> 0.20)
 
 GEM
@@ -38,10 +39,13 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.7.0)
     rspec-support (3.7.1)
+    terminal-table (1.8.0)
+      unicode-display_width (~> 1.1, >= 1.1.1)
     thor (0.20.0)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.5)
+    unicode-display_width (1.4.0)
 
 PLATFORMS
   ruby
@@ -51,4 +55,4 @@ DEPENDENCIES
   rspec
 
 BUNDLED WITH
-   1.16.2
+   1.17.1

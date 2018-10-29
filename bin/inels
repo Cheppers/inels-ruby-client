@@ -2,81 +2,79 @@
 
 require 'thor'
 require 'inels'
-
-IPS = %w(192.168.1.30 192.168.1.31 192.168.1.32)
+require 'terminal-table'
+require_relative '../lib/inels/helpers'
 
 class InelsCLI < Thor
+  include Inels::Helpers
 
-  desc 'list', 'List devices'
+  desc 'list', 'List devices.'
   def list 
-    devices = Inels::Controller.new(IPS).list_devices
-    head = [
-      { name: 'ID',         id: :id           },
-      { name: 'Name',       id: :name         },
-      { name: 'Type',       id: :product_type },
-      { name: 'Room name',  id: :room_name    },
-      { name: 'IP address', id: :ip           },
-    ]
-    print_table(devices, head)
+    print_device_list(controller.list_devices)
   end
 
-  desc 'get-device ID', 'Gets device\'s information'
-  method_option :verbose, type: :boolean, default: false, aliases: '-v', desc: 'Show additional information related to the device'
-  def get_device id
-    device = Inels::Controller.new(IPS).get_device(id, verbose: options[:verbose])
-    device.each do |k,v|
-      if v.is_a?(Array)
-        puts "#{k}: "
-        v.each do |ve|
-          ve.each_with_index do |(vk,vv),index|
-            if index == 0
-              puts "- #{vk}: #{vv}"
-            else
-              puts "  #{vk}: #{vv}"
-            end
-          end
-        end
-      else
-        puts "#{k}: #{v}"
-      end
-    end
+  desc 'get-device ID', 'Gets device\'s information.'
+  method_option :verbose, type: :boolean,
+                          default: false,
+                          aliases: '-v',
+                          desc: 'Additional information related to the device.'
+  def get_device(id)
+    print_device(controller.get_device(id, verbose: options[:verbose]))
   end
 
-  desc 'set-correction ID CORRECTION', 'Sets device\'s correction'
-  def set_correction id, correction
-    Inels::Controller.new(IPS).set_correction(id, Integer(correction))
+  desc 'set-correction ID CORRECTION', 'Sets device\'s correction.'
+  def set_correction(id, correction)
+    controller.set_correction(id, Integer(correction))
+    puts "Success."
   end
 
-  desc 'set-power ID POWER', 'Sets device\'s power'
-  def set_power id, power
-    Inels::Controller.new(IPS).set_power(id, Integer(power))
+  desc 'set-power ID POWER', 'Sets device\'s power.'
+  def set_power(id, power)
+    controller.set_power(id, Integer(power))
+    puts "Success."
   end
 
   no_commands do
-    def print_table(values, head)
-      head.each do |title|
-        title[:lenght] = (values.map{|value| value[title[:id]].to_s.length} + [title[:name].length]).max
+    def clients
+      @clients ||= load_config['clients'].each do |c|
+        {
+          'ip' => c['ip'],
+          'username' => c['username'],
+          'password' => c['password']
+        }
       end
-      print_line(head)
-      print_head(head)
-      print_line(head)
-      values.each{|row| print_row(head, row)}
-      print_line(head)
-      
     end
 
-    def print_line(head)
-      puts '-' * (head.map{|e| e[:lenght] + 3}.reduce(&:+) + 1)
+    def controller
+      @controller ||= Inels::Controller.new(clients)
     end
 
-    def print_head(head)
-      columns = head.map{|e| e[:name].ljust(e[:lenght], ' ')}
-      puts '| ' + columns.join(' | ') + ' |'
+    def print_device_list(devices)
+      puts (Terminal::Table.new do |t|
+        t.headings = devices.first.keys
+        devices.each { |d| t << d.values }
+      end)
     end
 
-    def print_row(head, row)
-      columns = head.map{|e| row[e[:id]].to_s.ljust(e[:lenght], ' ')}
-      puts '| ' + columns.join(' | ') + ' |'
+    def print_device(device)
+      complex, simple = device.partition { |k, v| v.is_a?(Array) }
+
+      puts (Terminal::Table.new do |t|
+        t.title = 'General information'
+        simple.each { |s| t << s }
+      end)
+
+      complex.each do |c|
+        puts "\n"
+        puts (Terminal::Table.new do |t|
+          t.title = c.first
+          t.headings = c[1].first.keys
+          
+          c[1].each do |h|
+            t << h.values
+          end
+        end)
+      end
     end
   end
 end
