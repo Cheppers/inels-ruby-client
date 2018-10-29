@@ -1,16 +1,18 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'thor'
 require 'inels'
 require 'terminal-table'
 require_relative '../lib/inels/helpers'
 
+# CLI for the controller.
 class InelsCLI < Thor
   include Inels::Helpers
 
   desc 'list', 'List devices.'
-  def list 
-    print_device_list(controller.list_devices)
+  def list
+    print_device_list(controller.devices)
   end
 
   desc 'get-device ID', 'Gets device\'s information.'
@@ -19,24 +21,24 @@ class InelsCLI < Thor
                           aliases: '-v',
                           desc: 'Additional information related to the device.'
   def get_device(id)
-    print_device(controller.get_device(id, verbose: options[:verbose]))
+    print_device(controller.device(id, verbose: options[:verbose]))
   end
 
   desc 'set-correction ID CORRECTION', 'Sets device\'s correction.'
   def set_correction(id, correction)
     controller.set_correction(id, Integer(correction))
-    puts "Success."
+    puts 'Success.'
   end
 
   desc 'set-power ID POWER', 'Sets device\'s power.'
   def set_power(id, power)
     controller.set_power(id, Integer(power))
-    puts "Success."
+    puts 'Success.'
   end
 
-  no_commands do
+  no_commands do # rubocop:disable Metrics/BlockLength
     def clients
-      @clients ||= load_config['clients'].each do |c|
+      @clients ||= load_config['clients'].map do |c|
         {
           'ip' => c['ip'],
           'username' => c['username'],
@@ -50,26 +52,35 @@ class InelsCLI < Thor
     end
 
     def print_device_list(devices)
-      puts (Terminal::Table.new do |t|
+      puts(Terminal::Table.new do |t|
         t.headings = devices.first.keys
         devices.each { |d| t << d.values }
       end)
     end
 
     def print_device(device)
-      complex, simple = device.partition { |k, v| v.is_a?(Array) }
+      complex, simple = device.partition { |_k, v| v.is_a?(Array) }
 
-      puts (Terminal::Table.new do |t|
+      print_general_info(simple)
+      print_complex_info(complex)
+    end
+
+    private
+
+    def print_general_info(simple)
+      puts(Terminal::Table.new do |t|
         t.title = 'General information'
         simple.each { |s| t << s }
       end)
+    end
 
+    def print_complex_info(complex)
       complex.each do |c|
         puts "\n"
-        puts (Terminal::Table.new do |t|
+        puts(Terminal::Table.new do |t|
           t.title = c.first
           t.headings = c[1].first.keys
-          
+
           c[1].each do |h|
             t << h.values
           end
